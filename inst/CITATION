@@ -19,7 +19,19 @@ citEntry(entry="Article",
 the aggregated isotopic distribution and exact center-masses. JASMS, 2012, doi:10.1007/
 s13361-011-0326-2",
                    sep=""))
-                   
+citEntry(entry="Article",
+         title="BRAIN: a universal tool for high-throughput calculations of the isotopic distribution for mass spectrometry",
+         author=personList(as.person("P. Dittwald"),
+                           as.person("J. Claesen"),
+                           as.person("T. Burzykowski"),
+                           as.person("D. Valkenborg"),
+                           as.person("A. Gambin") 
+                           ),
+         journal="Anal Chem.",        
+	 year = "2013",
+         textVersion =
+             paste("Dittwald P., Claesen J., Burzykowski T., Valkenborg D., Gambin A. BRAIN: a universal tool for high-throughput calculations of the isotopic distribution for mass spectrometry. Anal Chem., 2013, doi: 10.1021/ac303439m",
+                   sep=""))                   
 citFooter("To obtain the references in BibTex format, enter",
           "'toBibtex(citation(\"fastseg\"))'")
 

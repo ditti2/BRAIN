@@ -1,5 +1,6 @@
 export(getAtomsFromSeq)
 export(useBRAIN)
+export(useBRAIN2)
 export(calculateIsotopicProbabilities)
 export(calculateAverageMass)
 export(calculateMonoisotopicMass)

@@ -1,3 +1,4 @@
+
 calculateNrPeaks <- function(aC){		
 	averageMass <- calculateAverageMass(aC)
 	monoMass <-calculateMonoisotopicMass(aC)
@@ -25,8 +26,13 @@ checkOption <- function(peaks, i, stopOption, nrPeaks, coverage, abundantEstim){
 
 
 
-peaksFromParameters <- function(aCVec, a, b, c, d, z, phi, q0, nrRRoots, nrCRoots, stopOption, nrPeaks, coverage, abundantEstim){
+peaksFromParameters <- function(aCVec, a, b, c, d, z, phi, q0, nrRRoots, nrCRoots, stopOption, nrPeaks, coverage, abundantEstim, approx=FALSE, approxStart=1, approxParam=NULL){
 ##used in calculatePeaks (defined below) and calculateDifferential (calculate.differential.R)
+
+  if (approx){
+	    return(peaksFromParametersApprox(aCVec, a, b, c, d, z, phi, q0, nrRRoots, nrCRoots, stopOption, nrPeaks, coverage, abundantEstim, approx, approxStart, approxParam))
+  }
+
 
   if (is.null(nrPeaks)){      
       aC <- getAC(aCVec)      
@@ -115,21 +121,26 @@ peaksFromParameters <- function(aCVec, a, b, c, d, z, phi, q0, nrRRoots, nrCRoot
 }
 
 
-calculateIsotopicProbabilities <- function(aC, stopOption="nrPeaks", nrPeaks=NULL, coverage=NULL, abundantEstim=NULL){
 
-  calculatePeaks <- function(aCVec, stopOption, nrPeaks, coverage, abundantEstim){
+calculateIsotopicProbabilities <- function(aC, stopOption="nrPeaks", nrPeaks=NULL, coverage=NULL, abundantEstim=NULL, approx=FALSE, approxStart=1, approxParam=NULL){
+
+  calculatePeaks <- function(aCVec, stopOption, nrPeaks, coverage, abundantEstim, approx, approxStart, approxParam){
     ### local function
 
     
 
-    prefixList <- getCoefficientsIso()
+   prefixList <- getCoefficientsIso()
+
     
-    prefixPeaks <- peaksFromParameters(aCVec, prefixList[[1]], prefixList[[2]], prefixList[[3]], prefixList[[4]], prefixList[[5]], prefixList[[6]], prefixList[[7]], prefixList[[8]], prefixList[[9]], stopOption=stopOption, nrPeaks=nrPeaks, coverage=coverage, abundantEstim=abundantEstim)
+    prefixPeaks <- peaksFromParameters(aCVec, prefixList[[1]], prefixList[[2]], prefixList[[3]], prefixList[[4]], prefixList[[5]], prefixList[[6]], prefixList[[7]], prefixList[[8]], prefixList[[9]], stopOption=stopOption, nrPeaks=nrPeaks, coverage=coverage, abundantEstim=abundantEstim, approx=approx, approxStart=approxStart, approxParam=approxParam)
   }
   #### start of calculatePeaks
   aCVec <- getACVec(aC)  
-  isoPeaks <- calculatePeaks(aCVec, stopOption, nrPeaks, coverage, abundantEstim) 
+  isoPeaks <- calculatePeaks(aCVec, stopOption, nrPeaks, coverage, abundantEstim, approx=approx, approxStart=approxStart, approxParam=approxParam) 
 }
+
+
+
 
 useBRAIN <- function(aC = aC, stopOption="nrPeaks", nrPeaks=NULL, coverage=NULL, abundantEstim=NULL){
 #   print(stopOption)
@@ -160,4 +171,12 @@ useBRAIN <- function(aC = aC, stopOption="nrPeaks", nrPeaks=NULL, coverage=NULL,
 
  list(isoDistr=iso, masses=masses, monoisotopicMass = mono, avgMass = avgMass)
 }
+
+
+useBRAIN2 <- function(aC = aC, stopOption="nrPeaks", nrPeaks=NULL, approxStart = 1, approxParam=NULL){
+ iso <- calculateIsotopicProbabilities(aC = aC, stopOption, nrPeaks, coverage=NULL, abundantEstim=NULL, approx=TRUE, approxStart=approxStart, approxParam=approxParam)
+  
+ list(isoDistr=iso)
+}
+
 

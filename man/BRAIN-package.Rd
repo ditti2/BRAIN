@@ -9,8 +9,8 @@ Implementation of BRAIN (Baffling Recursive Algorithm for Isotope distributioN c
 This package implements BRAIN (Baffling Recursive Algorithm for Isotope distributioN calculations) is described in full details by Claesen et al. [Clae] (see also application note [Ditt]). The algorithm uses an algebraic approach (Viete's formulas, Newton identities [Macd]) which is 
 especially useful for large molecules due to its advantageous scaling properties. 
 This version of the package provides functions for calculating the aggregated isotopic distribution and center-masses masses for 
-each aggregated isotopic variant for chemical components built from carbon, hydrogen, oxygen, nitrogen and sulfur (e.g. peptides). The natural abundances and 
-molecular masses for stable isotopes of C, H, N, O, S are taken from IUPAC 1997 [Rosm]. 
+each aggregated isotopic variant for chemical components built from carbon, hydrogen, oxygen, nitrogen and sulfur (e.g. peptides). The natural abundances and molecular masses for stable isotopes of C, H, N, O, S are taken from IUPAC 1997 [Rosm]. 
+Also, some heuristics to faster compute isotopic distribution are applied [Ditt2].
 }
 \details{
 \tabular{ll}{
@@ -32,6 +32,9 @@ Maintainer: Piotr Dittwald <piotr.dittwald@mimuw.edu.pl>
 the aggregated isotopic distribution and exact center-masses. JASMS, 2012, doi:10.1007/s13361-011-0326-2
 
 [Ditt] Dittwald P., Claesen J., Burzykowski T., Valkenborg D., Gambin A. BRAIN: a universal tool for high-throughput calculations of the isotopic distribution for mass spectrometry. Anal Chem., 2013, doi: 10.1021/ac303439m
+
+[Ditt2] Dittwald P., Valkenborg D. BRAIN 2.0: time and memory complexity improvements in the algorithm for calculating the isotope distribution.
+JASMS, 2014, doi: 10.1007/s13361-013-0796-5.
 
 [Macd] Macdonald I.G., Symmetric functions and Hall polynomials / by I. G. Macdonald. Clarendon Press; Oxford University Press, Oxford : New York, 1979.
 
