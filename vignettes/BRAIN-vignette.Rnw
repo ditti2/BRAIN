@@ -363,7 +363,7 @@ plot(hist)
 
 
 \section{BRAIN 2.0 heuristics}\label{BRAIN2}
-As mentioned in \textit{Dittwald P., Valkenborg D. BRAIN 2.0: time and memory complexity improvements in the algorithm for calculating the isotope distribution. JASMS, 2014}, it is possible to use several heuristics to make faster computations related to isotopic distribution computations.
+As mentioned in \textit{Dittwald P., Valkenborg D. BRAIN 2.0: time and memory complexity improvements in the algorithm for calculating the isotope distribution. JASMS, 2014}, it is possible to use several heuristics to make faster computations of isotopic distribution.
 
 \subsection{RCL: Recurrence of Constant Length}\label{RCL}
 The recurrence used to compute isotopic distribution might be shortened by using \textit{approxParam}, with value >= 5 should be enough. This limits the number of multiplications, without much loss in accuracy. Let us see the examples:
