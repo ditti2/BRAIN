@@ -45,7 +45,9 @@ This package has five functions:
 \item {\texttt{calculateAverageMass}}, which computes the theoretical average mass of biomolecules composed out of carbon, hydrogen, oxygen, nitrogen and sulfur; 
 \item {\texttt{calculateIsotopicProbabilities}}, which computes the isotopic probabilities of the aggregated isotopic variants for biomolecules composed out of carbon, hydrogen, oxygen, nitrogen and sulfur; 
 \item {\texttt{calculateNrPeaks}}, which computes heuristically the required number of consecutive aggregated isotopic variants (starting from the monoisotopic mass), with a minimum of five; 
-\item {\texttt{getAtomsFromSeq}}, which creates atomic composition from a given aminoacid sequence.
+\item {\texttt{getAtomsFromSeq}}, which creates atomic composition from a given aminoacid sequence;
+\item {\texttt{useBRAIN2}}, which computes the probabilities of aggregated isotopic variants for biomolecules composed out of carbon, hydrogen, oxygen, nitrogen and sulfur. This function allows for heuristics aimed for time savings in computations.
+
 
 \end{enumerate}
 
@@ -359,6 +361,82 @@ main="", xlab="residuals of the linear model (Da)")
 plot(hist)
 @
 
+
+\section{BRAIN 2.0 heuristics}\label{BRAIN2}
+As mentioned in \textit{Dittwald P., Valkenborg D. BRAIN 2.0: time and memory complexity improvements in the algorithm for calculating the isotope distribution. JASMS, 2014}, it is possible to use several heuristics to make faster computations related to isotopic distribution computations.
+
+\subsection{RCL: Recurrence of Constant Length}\label{RCL}
+The recurrence used to compute isotopic distribution might be shortened by using \textit{approxParam}, with value >= 5 should be enough. This limits the number of multiplications, without much loss in accuracy. Let us see the examples:
+
+<<>>=
+
+benchmarkRCL <- function(aC, nrPeaks){
+  print("Benchmarking correctness of approximations of results:")
+  resNoRCL <-  useBRAIN2(aC = aC, nrPeaks = nrPeaks)$iso
+  resRCL   <-  useBRAIN2(aC = aC, nrPeaks = nrPeaks, approxParam = 10)$iso
+  print(c('max error: ', max(abs(resNoRCL - resRCL))))
+  print(c('>> max result no RCL:  ', max(resNoRCL)))
+  print(c('>> max result with RCL:', max(resRCL)))
+  print("\nBenchmarking time performance")
+  print("No RCL: 10 replications")
+  print(system.time( 
+        replicate(10, useBRAIN2(aC = aC, nrPeaks = nrPeaks)$iso ) ))
+  print("With RCL: 10 replications")
+  print(system.time( 
+        replicate(
+          10, useBRAIN2(aC = aC, nrPeaks = nrPeaks, approxParam = 10)$iso )))
+
+  
+}
+
+#angiotensineII
+benchmarkRCL(aC = angiotensineII, nrPeaks = 50)
+
+#humandynein
+benchmarkRCL(aC = humandynein, nrPeaks = 1000)
+@
+
+\subsection{LSP: Late Starting Point}\label{LSP}
+By using \textit{approxStart} parameter, we can narrow down computations to the peak indices arrount most abundant ones. 
+This option changes absolute values of isotopic distribution, but is aimed to approximate peak ratios.
+Note, the approximation needs some burn-in period to retrieve good isotopic ratios. The exemplary rule-of-thumb suggested in \textit{BRAIN 2.0} paper is $$\lceil(\log_{10}(monoisotopicMass)\rceil + 5$$
+Also, LSP option is useful for heavy molecules, were most abundant peak is much shifted from the monoisotopic peak.
+<<>>=
+
+benchmarkLSP <- function(aC, startIdx, endIdx){
+  print("Benchmarking correctness of approximations of results:")
+  burn_in = 11 ##inspired by BRAIN 2.0 paper
+  resNoLSP <-  useBRAIN2(aC = aC, nrPeaks = endIdx)$iso
+  approxStart <- ifelse(1 <= startIdx-burn_in+1, startIdx-burn_in+1, 1) 
+  resLSP   <-  useBRAIN2(aC = aC, nrPeaks = endIdx, approxStart = approxStart)$iso
+  print(c('length(resNoLSP): ', length(resNoLSP)))
+  print(c('length(resLSP): ', length(resLSP)))
+  resNoLSP_truncate = resNoLSP[startIdx:endIdx]
+  resLSP_truncate = resLSP[burn_in:length(resLSP)] ###remove peaks from burn_in region
+  print(c('Note, absolute values might vary'))
+  print(c('>> max result no RCL:  ', max(resNoLSP_truncate)))
+  print(c('>> max result with RCL:  ', max(resLSP_truncate)))
+  ratiosNoLSP = resNoLSP_truncate/max(resNoLSP_truncate)
+  ratiosLSP = resLSP_truncate/max(resLSP_truncate)
+  print(c('max error in interesting region: ', max(abs(ratiosNoLSP - ratiosLSP))))
+  print(c('>> top 3 ratios no RCL:  ', 
+        sort(ratiosNoLSP, decreasing = TRUE)[1:3]))##we assume at least 3 values
+  print(c('>> top 3 ratios with RCL:', 
+        sort(ratiosLSP, decreasing = TRUE)[1:3]))##we assume at least 3 values
+  print("\nBenchmarking time performance")
+  print("No RCL: 10 replications")
+  print(system.time( replicate(10, useBRAIN2(aC = aC, nrPeaks = endIdx)$iso )))
+  print("With RCL: 10 replications")
+  print(system.time( 
+        replicate(
+         10, useBRAIN2(aC=aC, nrPeaks= endIdx, approxStart=approxStart)$iso )))
+
+  
+}
+
+#humandynein
+benchmarkLSP(aC = humandynein, startIdx = 210, endIdx = 450)
+@
 
 
 
