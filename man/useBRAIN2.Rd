@@ -66,6 +66,6 @@ If only isotopic probabilities are needed, then the function calculateIsotopicPr
   max(old - new)
   max((old - new)/old)
   res3 <-  useBRAIN2(aC = aC, stopOption="nrPeaks", nrPeaks = nrPeaks, approx=TRUE, approxParam = 10)
-  max((res3$iso - res$iso)/res$iso)
+  max(res3$iso - res$iso)
 }
 
