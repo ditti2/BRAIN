@@ -2,8 +2,8 @@ Package: BRAIN
 Type: Package
 Title: Baffling Recursive Algorithm for Isotope distributioN
         calculations
-Version: 1.27.1
-Date: 2018-08-08
+Version: 1.27.2
+Date: 2020-01-30
 Author: Piotr Dittwald, with contributions of Dirk Valkenborg and
         Jurgen Claesen
 Maintainer: Piotr Dittwald <piotr.dittwald@mimuw.edu.pl>
